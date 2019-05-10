@@ -1,7 +1,7 @@
 import pygame
 pygame.init()
 
-class Card:
+class Card(object):
     def __init__(self, path, x, y):
         self.image = pygame.image.load(path).convert_alpha()
         self.path = path
@@ -32,3 +32,17 @@ class Card:
                 elif self.status == 1 :
                     self.move(0, 40)
                     self.status = 0
+
+class CardPlaced(Card):
+    def __init__(self, path, x, y):
+        self.image = pygame.image.load("assets/x.png").convert_alpha()
+        self.path = path
+        
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        
+        self.status = 2
+    
+    
+    

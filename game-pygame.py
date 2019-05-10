@@ -4,41 +4,16 @@ import random
 import pygame
 from pygame.locals import *
 
-from card import Card
-from button import Button
+from utils import *
+
+from card import *
+from button import *
 
 pygame.init()
+pygame.font.init()
 
+myfont = pygame.font.SysFont('Comic Sans MS', 24)
 
-def start_draw_position(n_cards):
-    return (1200 - 20*(n_cards-1) -90)/2 , 20
-
-def draw_cards(paths):
-    my_cards = []
-
-    if len(paths) <= 26:
-        x_start, space = start_draw_position(len(paths))
-        hit = 0
-
-        for p in paths:
-            my_cards.append(Card(p, x_start + space*hit, 555))
-            hit+=1
-    else:
-        x_start, space = start_draw_position(len(paths) - 26)
-        hit = 0
-        
-        for i in range(len(paths) - 26):
-            my_cards.append(Card(paths[i], x_start + space*hit, 525))
-            hit+=1
-        
-        x_start, space = start_draw_position(26)
-        hit = 0
-
-        for i in range(len(paths) - 26, len(paths)):
-            my_cards.append(Card(paths[i], x_start + space*hit, 585))
-            hit+=1
-    
-    return my_cards
 
 screen = pygame.display.set_mode((1200, 675))
 background = pygame.image.load("assets/bg.jpg")
@@ -47,20 +22,48 @@ kartu_kiri = pygame.image.load("assets/kiri.png")
 kartu_kanan = pygame.image.load("assets/kanan.png")
 kartu_atas = pygame.image.load("assets/atas.png")
 
-buttons = []
-buttons.append(Button("assets/pilihangka.png", 1050, 565))
-buttons.append(Button("assets/pilihjumlah.png", 1050, 600))
-buttons.append(Button("assets/go.png", 1050, 635))
-buttons.append(Button("assets/bohong.png", 30, 600))
+place_card = Button("assets/placecard.png", 1087, 537)
+liar_button = Button("assets/liar.png", 100, 550)
+
+button_num = []
+button_amount = []
+
+path = "assets/angka"
+hit = 0
+for f in os.listdir(path):
+    if hit < 7:
+        button_num.append(ButtonNumber(os.path.join(path, f), 995 + 28*hit, 575))
+    else:
+        button_num.append(ButtonNumber(os.path.join(path, f), 995 + 28*(hit%7), 605))
+    hit+=1
+
+path = "assets/jumlah"
+hit = 0
+for f in os.listdir(path):
+    button_amount.append(ButtonAmount(os.path.join(path, f), 995 + 28*hit, 640))
+    hit+=1
 
 path = "assets/card"
 list_path = [os.path.join(path, f) for f in os.listdir(path)]
 
 #pilih 13 card random
-paths = random.sample(list_path, 26)
-my_cards = draw_cards(paths)
+paths = random.sample(list_path, 13)
+pos_my_cards = get_position_my_cards(13)
+
+my_cards = [Card(paths[i], pos_my_cards[i][0], pos_my_cards[i][1]) for i in range(len(paths))]
+
+
+
+num_clicked = "0"
+amount_clicked = "0"
+
+middle_card = []
+active_card = []
+
 
 while(True):
+
+    pygame.display.flip()
     screen.fill(0)
 
     #draw the background & cards
@@ -70,26 +73,62 @@ while(True):
     screen.blit(kartu_kanan, (1080, 247.5))
 
     #draw the buttons
-    for button in buttons:
+    place_card.draw(screen)
+    liar_button.draw(screen)
+
+    for button in button_num:
+        button.draw(screen)
+    
+    for button in button_amount:
         button.draw(screen)
     
     for card in my_cards:
         card.draw(screen)
 
-    pygame.display.flip()
+    for card in active_card:
+        card.draw(screen)
+    
+    #print(num_clicked)
+    num_text = myfont.render(num_clicked, True, (255, 255, 255))
+    amount_text = myfont.render(amount_clicked, True, (255, 255, 255))
+
+    screen.blit(num_text,(920,540))
+    screen.blit(amount_text,(960,540))
 
     for event in pygame.event.get():
         if event.type == pygame.MOUSEBUTTONUP:
             for c in my_cards:
-                c.card_clicked()    
+                c.card_clicked()
 
-            for b in buttons:
-                b.button_clicked(buttons)
-                if b.status == 1:
-                    if b.name == "pilihangka":
-                        print("yes")                
+            if place_card.button_clicked():
+                active_card = []
+                
+                hit = 0
+                for c in my_cards:
+                    if(c.status == 1):
+                        active_card.append(CardPlaced(c.path, 550 + hit*90, 300))
+                        
+                        my_cards.remove(c)
+                        del c
+
+                        hit+=1
+            
+            if liar_button.button_clicked():
+                print("liar button")
+
+            for b in button_num:
+                flag, num = b.button_clicked()
+                if flag:
+                    num_clicked = num
+                
+            for b in button_amount:
+                flag, amount = b.button_clicked()    
+                if flag:
+                    amount_clicked = amount            
 
         if event.type == pygame.QUIT:
             pygame.quit()
             exit(0)
+    
+    
       
