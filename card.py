@@ -44,5 +44,9 @@ class CardPlaced(Card):
         
         self.status = 2
     
+    def to_stack(self, x, y):
+        self.rect.x = x
+        self.rect.y = y
+    
     
     

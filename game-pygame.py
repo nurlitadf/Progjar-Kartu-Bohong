@@ -1,6 +1,7 @@
 import os
 import random
 
+import tkinter
 import pygame
 from pygame.locals import *
 
@@ -9,11 +10,32 @@ from utils import *
 from card import *
 from button import *
 
+def get_input():
+    global input_username, root, username
+    username = input_username.get()
+    root.destroy()
+
+root = tkinter.Tk()
+root.title('Input Your Username')
+
+tkinter.Label(root, text="Username:     ").grid(row=0)
+input_username = tkinter.Entry(root)
+input_username.focus_set()
+
+input_username.grid(row=0, column=1)
+
+tkinter.Button(root, text='Play', command=get_input).grid(row=2, column=1)
+
+username = ""
+
+root.mainloop()
+
 pygame.init()
 pygame.font.init()
 
 myfont = pygame.font.SysFont('Comic Sans MS', 24)
 
+print(username)
 
 screen = pygame.display.set_mode((1200, 675))
 background = pygame.image.load("assets/bg.jpg")
@@ -53,13 +75,12 @@ pos_my_cards = get_position_my_cards(13)
 my_cards = [Card(paths[i], pos_my_cards[i][0], pos_my_cards[i][1]) for i in range(len(paths))]
 
 
-
 num_clicked = "0"
 amount_clicked = "0"
 
 middle_card = []
+hit_middle = 0
 active_card = []
-
 
 while(True):
 
@@ -88,6 +109,9 @@ while(True):
     for card in active_card:
         card.draw(screen)
     
+    for card in middle_card:
+        card.draw(screen)
+    
     #print(num_clicked)
     num_text = myfont.render(num_clicked, True, (255, 255, 255))
     amount_text = myfont.render(amount_clicked, True, (255, 255, 255))
@@ -101,20 +125,46 @@ while(True):
                 c.card_clicked()
 
             if place_card.button_clicked():
+                for c in active_card:
+                    c.to_stack(450, 300-hit_middle*3)
+                    middle_card.append(c)
+
+                    hit_middle+=1
+
                 active_card = []
                 
                 hit = 0
-                for c in my_cards:
+
+                for c in my_cards[:]:
                     if(c.status == 1):
-                        active_card.append(CardPlaced(c.path, 550 + hit*90, 300))
-                        
+                        active_card.append(CardPlaced(c.path, 550 + hit*80, 300))
+                    
                         my_cards.remove(c)
+                        paths.remove(c.path)
                         del c
 
                         hit+=1
             
             if liar_button.button_clicked():
                 print("liar button")
+                for c in active_card:
+                    middle_card.append(c)
+
+                active_card = []
+
+                for c in middle_card[:]:
+                    paths.append(c.path)
+                    middle_card.remove(c)
+                    del c
+
+                pos_my_cards = get_position_my_cards(len(paths))
+                del my_cards
+                my_cards = []
+
+                for i in range(len(paths)):
+                    my_cards.append(Card(paths[i], pos_my_cards[i][0], pos_my_cards[i][1]))
+                
+                hit_middle = 0
 
             for b in button_num:
                 flag, num = b.button_clicked()
