@@ -14,9 +14,9 @@ class Card:
     """
 
     def __init__(self, name: str, suit: str):
-        self.name = name
+        self.name = str(name)
         self.suit = suit
-        self.value = CARD_MAPPING[name]
+        self.value = CARD_MAPPING[self.name]
 
     def __lt__(self, card):
         return self.value < card.value
@@ -52,6 +52,13 @@ class Deck:
     def __str__(self):
         return str([str(card) for card in self.cards])
 
+    def pick(self, indexes: list):
+        temp = [card for i, card in enumerate(self.cards) if i not in indexes]
+        selected = [card for i, card in enumerate(self.cards) if i in indexes]
+
+        self.cards = temp
+        return selected
+
 
 class CardPlaced:
     """
@@ -78,6 +85,10 @@ class CardPlaced:
 
     def get_cards(self) -> list:
         return [card for cards in self.cards for card in cards]
+
+    def empty(self):
+        self.cards = []
+        self.values = []
 
 
 if __name__ == "__main__":
