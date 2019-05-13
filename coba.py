@@ -1,3 +1,7 @@
+import pygame
+import sys
+pygame.init()
+
 if __name__ == "__main__":
     def _creator():        
         screen2 = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT),0,32)

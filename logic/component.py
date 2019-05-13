@@ -92,11 +92,24 @@ class CardPlaced:
 
 
 if __name__ == "__main__":
-    card = Card(name="2", suit="spade")
+    card = Card(name="J", suit="spade")
+    print(card.value)
+
     deck = Deck()
     for i in range(2, 11):
         deck.add(Card(str(i), "spade"))
+    deck.add(Card("2", "club"))
+    deck.add(Card("J", "spade"))
+    deck.add(Card("J", "club"))
+    deck.add(Card("J", "diamond"))
+    deck.add(Card("J", "heart"))
     print(deck)
+    deck.remove_quad()
+    print(deck)
+    picks = deck.pick(indexes=[1,2])
+    print(picks)
+    print(deck)
+
 
     card_placed = CardPlaced()
 
