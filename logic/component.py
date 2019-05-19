@@ -39,6 +39,9 @@ class Deck:
     def add(self, card: Card):
         self.cards.append(card)
 
+    def extend(self, cards: list):
+        self.cards.extend(cards)
+
     def remove_quad(self):
         counter = [0] * 15
         for card in self.cards:
@@ -84,11 +87,26 @@ class CardPlaced:
         self.values.append(value)
 
     def get_cards(self) -> list:
-        return [card for cards in self.cards for card in cards]
+        result = [card for cards in self.cards for card in cards]
+        self.cards = []
+        self.values = []
+        return result
 
     def empty(self):
         self.cards = []
         self.values = []
+
+    def __str__(self):
+        res = []
+        for cards, value in zip(self.cards, self.values):
+            card = [str(c) for c in cards]
+            card = ' | '.join(card)
+            temp = '{} : {}'.format(value, card)
+            res.append(temp)
+        res = '\n'.join(res)
+        if res == '':
+            return '[]'
+        return res
 
 
 if __name__ == "__main__":
@@ -117,6 +135,8 @@ if __name__ == "__main__":
 
     card_placed.add(cards=[Card("3", "spade"), Card("3", "spade")], value=3)
     print(card_placed.check())  # True
+
+    print(card_placed)
 
     cards = card_placed.get_cards()
     print([str(card) for card in cards])
