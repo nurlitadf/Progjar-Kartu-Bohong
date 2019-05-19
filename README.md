@@ -3,3 +3,4 @@
 requirements:
 - python 3
 - pygame
+- tkinter

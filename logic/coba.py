@@ -13,7 +13,6 @@ def create_decks(names: list):
         for name in list(range(2, 11)) + ['J', 'Q', 'K', 'A']:
             decks.append([str(name), suit])
     random.shuffle(decks)
-    # print(decks)
 
     player_decks = {}
     for i, player in enumerate(names):

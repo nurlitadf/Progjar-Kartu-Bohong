@@ -106,10 +106,9 @@ if __name__ == "__main__":
     print(deck)
     deck.remove_quad()
     print(deck)
-    picks = deck.pick(indexes=[1,2])
+    picks = deck.pick(indexes=[1, 2])
     print(picks)
     print(deck)
-
 
     card_placed = CardPlaced()
 
