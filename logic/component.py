@@ -6,6 +6,8 @@ CARD_MAPPING['Q'] = 12
 CARD_MAPPING['K'] = 13
 CARD_MAPPING['A'] = 14
 
+VAL_TO_CARD = {val: key for key, val in CARD_MAPPING.items()}
+
 
 class Card:
     """
