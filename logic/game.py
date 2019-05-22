@@ -27,6 +27,7 @@ class Game:
         self.state = ""
         self.turn = ""
         self.winner = []
+        self.sorted_score_list=[]
 
     def add_players(self, name: str):
         self.players.append(name)
@@ -81,9 +82,9 @@ class Game:
             else:
                 score_list[winner]=int(score_list[winner])+score
             score=score-100
-        sorted_score_list = sorted(score_list.items(), key=operator.itemgetter(1), reverse=True)
+        self.sorted_score_list = sorted(score_list.items(), key=operator.itemgetter(1), reverse=True)
         f=open("score.txt","w")
-        for ranking in sorted_score_list:
+        for ranking in self.sorted_score_list:
             print(ranking)
             f.write(ranking[0]+' '+str(ranking[1])+'\n')
         f.close()

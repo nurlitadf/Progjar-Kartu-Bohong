@@ -152,10 +152,24 @@ def lie_or_not_phase():
             make_message(msg)
             if(game.is_everyone_win()):
                 game.update_score()
+                winner={}
+                winner['MSG']="DONE"
+                winner['WINNER']=game.winner
+                winner['SCOREBOARD']=game.sorted_score_list
+                winner['GAME'] = game.__dict__
+                winner = pickle.dumps(winner)
+                broadcast(winner)
             return
     game.is_someone_win(game.turn)
     if(game.is_everyone_win()):
         game.update_score()
+        winner={}
+        winner['MSG']="DONE"
+        winner['WINNER']=game.winner
+        winner['SCOREBOARD']=game.sorted_score_list
+        winner['GAME'] = game.__dict__
+        winner = pickle.dumps(winner)
+        broadcast(winner)
     game.state = 'pick'
     game.next_turn()
     make_message("CONTINUE")

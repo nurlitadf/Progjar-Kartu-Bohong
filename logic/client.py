@@ -47,8 +47,13 @@ def receive():
         data = server.recv(BUFFER_SIZE)
         data = pickle.loads(data)
         debug_data(data)
-        GAME_DATA = data['GAME']
         MESSAGE = data['MSG']
+        if(MESSAGE=="DONE"):
+            print("Ranking:")
+            print(data['WINNER'])
+            print("Scoreboard:")
+            print(data['SCOREBOARD'])
+        GAME_DATA = data['GAME']
 
 
 data = server.recv(BUFFER_SIZE)
