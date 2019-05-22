@@ -3,7 +3,7 @@ import random
 import socket
 import sys
 import time
-from queue import LifoQueue
+from queue import Queue
 
 from _thread import start_new_thread
 from component import CARD_MAPPING, Card, CardPlaced, Deck
@@ -22,7 +22,7 @@ list_of_clients = []
 list_of_name = []
 game = Game()
 ready_counter = 0
-LIE_QUEUE = LifoQueue()
+LIE_QUEUE = Queue()
 
 NAME_TO_ID = {}
 ID_TO_NAME = {}
@@ -126,7 +126,7 @@ def client_thread(conn, addr):
 def lie_or_not_phase():
     global game, LIE_QUEUE
     while LIE_QUEUE.qsize() < len(game.players) - 1:
-        print(LIE_QUEUE.qsize())
+        # print(LIE_QUEUE.qsize())
         time.sleep(0.5)
         pass
     while not LIE_QUEUE.empty():

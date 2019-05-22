@@ -72,6 +72,13 @@ while True:
     if GAME_DATA['state'] == 'pick':
         print(MESSAGE)
         if name == GAME_DATA['turn']:
+            if GAME_DATA['card_placed'].is_empty():
+                print('[PICK FREELY]')
+            else:
+                num_cards = len(GAME_DATA['card_placed'])
+                last_val = VAL_TO_CARD[GAME_DATA['card_placed'].values[-1]]
+                print('[Curently there are {} cards of {}]'.format(num_cards, last_val))
+            print()
             for j, card in enumerate(GAME_DATA['player_decks'][name].cards):
                 print('[{} {}]'.format(j, card), end=" ")
             print()

@@ -90,8 +90,7 @@ class CardPlaced:
 
     def get_cards(self) -> list:
         result = [card for cards in self.cards for card in cards]
-        self.cards = []
-        self.values = []
+        self.empty()
         return result
 
     def empty(self):
@@ -109,6 +108,15 @@ class CardPlaced:
         if res == '':
             return '[]'
         return res
+
+    def __len__(self):
+        length = 0
+        for card in self.cards:
+            length += len(card)
+        return length
+
+    def is_empty(self):
+        return len(self) == 0
 
 
 if __name__ == "__main__":
@@ -139,6 +147,8 @@ if __name__ == "__main__":
     print(card_placed.check())  # True
 
     print(card_placed)
+    print('len', len(card_placed))
+    print('empty', card_placed.is_empty())
 
     cards = card_placed.get_cards()
     print([str(card) for card in cards])
