@@ -67,6 +67,12 @@ class Game:
     def save_score(self):
         pass
 
+    def isSomeoneWin(self):
+        for player in self.player_decks:
+            if self.player_decks[player].empty():
+                self.winner.append(player)
+                print(player+" win!!")
+
 
 if __name__ == "__main__":
     game = Game()

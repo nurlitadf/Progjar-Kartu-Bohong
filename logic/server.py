@@ -149,7 +149,9 @@ def lie_or_not_phase():
             game.turn = next_turn
             game.state = 'pick'
             make_message(msg)
+            game.isSomeoneWin()
             return
+    game.isSomeoneWin()
     game.state = 'pick'
     game.next_turn()
     make_message("CONTINUE")

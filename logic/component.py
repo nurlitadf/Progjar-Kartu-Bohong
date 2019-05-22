@@ -64,6 +64,11 @@ class Deck:
         self.cards = temp
         return selected
 
+    def empty(self):
+        if len(self.cards)==0: 
+            return True
+        return False
+
 
 class CardPlaced:
     """

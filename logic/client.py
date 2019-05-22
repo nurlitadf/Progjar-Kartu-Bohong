@@ -7,7 +7,7 @@ from _thread import start_new_thread
 from component import Card, Deck, CardPlaced, CARD_MAPPING, VAL_TO_CARD
 GAME_DATA = {}
 MESSAGE = ""
-BUFFER_SIZE = 2048
+BUFFER_SIZE = 4096
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 ip_address = '127.0.0.1'
