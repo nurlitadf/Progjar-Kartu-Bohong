@@ -145,13 +145,17 @@ def lie_or_not_phase():
                 msg = "Player {} guess is wrong, player {} is honest".format(name, game.turn)
             else:
                 msg = "Player {} guess is correct, player {} is liar".format(name, game.turn)
+            game.is_someone_win(game.turn)
             game.player_decks[victim].extend(pile)
             game.turn = next_turn
             game.state = 'pick'
             make_message(msg)
-            game.isSomeoneWin()
+            if(game.is_everyone_win()):
+                game.update_score()
             return
-    game.isSomeoneWin()
+    game.is_someone_win(game.turn)
+    if(game.is_everyone_win()):
+        game.update_score()
     game.state = 'pick'
     game.next_turn()
     make_message("CONTINUE")

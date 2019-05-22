@@ -1,4 +1,5 @@
 import random
+import operator
 from component import Card, CardPlaced, Deck
 
 '''
@@ -32,14 +33,17 @@ class Game:
 
     def create_decks(self):
         decks = []
-        for suit in ['spade', 'heart', 'diamond', 'club']:
-            for name in list(range(2, 11)) + ['J', 'Q', 'K', 'A']:
+        # for suit in ['spade', 'heart', 'diamond', 'club']:
+        for suit in ['spade']:
+            # for name in list(range(2, 11)) + ['J', 'Q', 'K', 'A']:
+            for name in list(range(2, 6)):
                 decks.append([str(name), suit])
         random.shuffle(decks)
 
         player_decks = {}
         for i, player in enumerate(self.players):
-            temp_deck = decks[i * 13:(i + 1) * 13]
+            # temp_deck = decks[i * 13:(i + 1) * 13]
+            temp_deck = decks[i * 1:(i + 1) * 1]
             new_deck = Deck()
             for card in temp_deck:
                 new_deck.add(Card(card[0], card[1]))
@@ -62,16 +66,44 @@ class Game:
         pass
 
     def update_score(self):
-        pass
+        f=open("score.txt","r")
+        f1=f.readlines()
+        score_list={}
+        for x in f1:
+            name=x.split(' ')[0]
+            score=x.split(' ')[1]
+            score_list[name]=score
+        f.close()
+        score=300
+        for winner in self.winner:
+            if(score_list.get(winner)==None):
+                score_list[winner]=score
+            else:
+                score_list[winner]=int(score_list[winner])+score
+            score=score-100
+        sorted_score_list = sorted(score_list.items(), key=operator.itemgetter(1), reverse=True)
+        f=open("score.txt","w")
+        for ranking in sorted_score_list:
+            print(ranking)
+            f.write(ranking[0]+' '+str(ranking[1])+'\n')
+        f.close()
 
     def save_score(self):
         pass
 
-    def isSomeoneWin(self):
-        for player in self.player_decks:
-            if self.player_decks[player].empty():
-                self.winner.append(player)
-                print(player+" win!!")
+    def is_someone_win(self, player):
+        if self.player_decks[player].empty():
+            self.winner.append(player)
+            print(player+" win!!")
+        return
+    
+    def is_everyone_win(self):
+        print("hehe")
+        if len(self.winner)==4:
+            print("yay")
+            return True
+        return False
+
 
 
 if __name__ == "__main__":
