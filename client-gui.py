@@ -194,9 +194,6 @@ while Flag:
             game_start = True
             temp = eval(str(GAME_DATA['player_decks'][username]))
 
-            # print(eval(str(my_card_data)))
-            # print(type(my_card_data))
-
             my_card_data = []
 
             for c in temp:
@@ -242,6 +239,69 @@ while Flag:
 
 
         for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONUP:
+                for c in my_cards:
+                    c.card_clicked()
+
+                if place_card.button_clicked():
+                    for c in active_card:
+                        c.to_stack(450, 300-hit_middle*3)
+                        middle_card.append(c)
+
+                        hit_middle+=1
+
+                    active_card = []
+                    
+                    hit = 0
+
+                    active_card_idx = []
+
+                    for i in range(len(my_cards)):
+                        if my_cards[i].status == 1:
+                            active_card_idx.append(i)
+                            
+
+                    for c in my_cards[:]:
+                        if(c.status == 1):
+                            active_card.append(CardPlaced(c.path, 550 + hit*80, 300))
+                        
+                            my_cards.remove(c)
+                            paths.remove(c.path)
+                            del c
+
+                            hit+=1
+                    
+                    make_message('PICK', SELECTED=active_card_idx, STATEMENT=num_clicked)
+
+
+                    
+                
+                if liar_button.button_clicked():
+                    print("liar button")
+                    # for c in active_card:
+                    #     middle_card.append(c)
+
+                    # active_card = []
+
+                    # for c in middle_card[:]:
+                    #     paths.append(c.path)
+                    #     middle_card.remove(c)
+                    #     del c
+
+                    # pos_my_cards = get_position_my_cards(len(paths))
+                    # del my_cards
+                    # my_cards = []
+
+                    # for i in range(len(paths)):
+                    #     my_cards.append(Card(paths[i], pos_my_cards[i][0], pos_my_cards[i][1]))
+                    
+                    # hit_middle = 0
+
+                for b in button_num:
+                    flag, num = b.button_clicked()
+                    if flag:
+                        num_clicked = num
+                
             if event.type == pygame.QUIT:
                 Flag = False
 
