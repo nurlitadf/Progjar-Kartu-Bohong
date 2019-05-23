@@ -27,8 +27,8 @@ class Game:
         self.state = ""
         self.turn = ""
         self.winner = []
-        self.sorted_score_list=[]
-        self.previous_card=None
+        self.sorted_score_list = []
+        self.previous_card = None
 
     def add_players(self, name: str):
         self.players.append(name)
@@ -36,9 +36,9 @@ class Game:
     def create_decks(self):
         decks = []
         for suit in ['spade', 'heart', 'diamond', 'club']:
-        # for suit in ['spade']:
+            # for suit in ['spade']:
             for name in list(range(2, 11)) + ['J', 'Q', 'K', 'A']:
-            # for name in list(range(2, 6)):
+                # for name in list(range(2, 6)):
                 decks.append([str(name), suit])
         random.shuffle(decks)
 
@@ -62,29 +62,32 @@ class Game:
         else:
             idx = -1
         idx = (idx + 1) % len(self.players)
+        while self.player_decks[self.players[idx]].empty():
+            print('[IDX]', idx)
+        print('[IDX]', idx)
         self.turn = self.players[idx]
 
     def loop(self):
         pass
 
     def update_score(self):
-        f=open("score.txt","r")
-        f1=f.readlines()
-        score_list={}
+        f = open("score.txt", "r")
+        f1 = f.readlines()
+        score_list = {}
         for x in f1:
-            name=x.split(' ')[0]
-            score=x.split(' ')[1]
-            score_list[name]=score
+            name = x.split(' ')[0]
+            score = int(x.split(' ')[1])
+            score_list[name] = score
         f.close()
-        score=300
+        score = 300
         for winner in self.winner:
-            if(score_list.get(winner)==None):
-                score_list[winner]=score
+            if(score_list.get(winner) == None):
+                score_list[winner] = score
             else:
-                score_list[winner]=int(score_list[winner])+score
-            score=score-100
+                score_list[winner] = int(score_list[winner])+score
+            score = score-100
         self.sorted_score_list = sorted(score_list.items(), key=operator.itemgetter(1), reverse=True)
-        f=open("score.txt","w")
+        f = open("score.txt", "w")
         for ranking in self.sorted_score_list:
             print(ranking)
             f.write(ranking[0]+' '+str(ranking[1])+'\n')
@@ -95,17 +98,18 @@ class Game:
 
     def is_someone_win(self, player):
         if self.player_decks[player].empty():
+            # self.players.remove(player)
+            # self.player_decks.pop(player, None)
             self.winner.append(player)
             print(player+" win!!")
         return
-    
+
     def is_everyone_win(self):
         print("hehe")
-        if len(self.winner)==4:
+        if len(self.winner) == 4:
             print("yay")
             return True
         return False
-
 
 
 if __name__ == "__main__":

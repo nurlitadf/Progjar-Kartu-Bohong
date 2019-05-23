@@ -123,20 +123,26 @@ def client_thread(conn, addr):
         except:
             remove(conn)
 
+
 def is_game_over():
     if(game.is_everyone_win()):
         game.update_score()
-        winner={}
-        winner['MSG']="DONE"
-        winner['WINNER']=game.winner
-        winner['SCOREBOARD']=game.sorted_score_list
+        game.state = 'finish'
+        game.finish = True
+        winner = {}
+        winner['MSG'] = "DONE"
+        winner['WINNER'] = game.winner
+        winner['SCOREBOARD'] = game.sorted_score_list
         winner['GAME'] = game.__dict__
         winner = pickle.dumps(winner)
         broadcast(winner)
+        time.sleep(2)
+        sys.exit(0)
+
 
 def lie_or_not_phase():
     global game, LIE_QUEUE
-    while LIE_QUEUE.qsize() < len(game.players) - 1:
+    while LIE_QUEUE.qsize() < len(game.players) - len(game.winner) - 1:
         # print(LIE_QUEUE.qsize())
         time.sleep(0.5)
         pass
@@ -145,7 +151,7 @@ def lie_or_not_phase():
         if statement:
             clear_queue()
             verdict = game.card_placed.check()
-            recently_placed_cards=game.card_placed.cards[-1]
+            recently_placed_cards = game.card_placed.cards[-1]
             pile = game.card_placed.get_cards()
             if verdict:             # ternyata jujur, tebakan salah
                 victim = name
@@ -154,21 +160,26 @@ def lie_or_not_phase():
                 victim = game.turn
                 next_turn = name
             if verdict:
-                msg = "Player {} guess is wrong, player {} is honest, player {}'s cards are ".format(name, game.turn, game.turn)
+                msg = "Player {} guess is wrong, player {} is honest, player {}'s cards are ".format(
+                    name, game.turn, game.turn)
             else:
-                msg = "Player {} guess is correct, player {} is liar, player {}'s cards are ".format(name, game.turn, game.turn)
+                msg = "Player {} guess is correct, player {} is liar, player {}'s cards are ".format(
+                    name, game.turn, game.turn)
             for card in recently_placed_cards:
-                msg=msg+str(card)+" "
-            game.previous_card=None
+                msg = msg+str(card)+" "
+            game.previous_card = None
             game.is_someone_win(game.turn)
             game.player_decks[victim].extend(pile)
             game.check_quad_deck()
-            game.turn = next_turn
+            if next_turn in game.winner:
+                game.next_turn()
+            else:
+                game.turn = next_turn
             game.state = 'pick'
             make_message(msg)
             is_game_over()
             return
-    game.previous_card=VAL_TO_CARD[game.card_placed.values[-1]]
+    game.previous_card = VAL_TO_CARD[game.card_placed.values[-1]]
     game.is_someone_win(game.turn)
     is_game_over()
     game.state = 'pick'
