@@ -168,8 +168,9 @@ def lie_or_not_phase():
             for card in recently_placed_cards:
                 msg = msg+str(card)+" "
             game.previous_card = None
-            game.is_someone_win(game.turn)
             game.player_decks[victim].extend(pile)
+            game.is_someone_win(game.turn)
+            print('[THE VICTIM]', victim)
             game.check_quad_deck()
             if next_turn in game.winner:
                 game.next_turn()
