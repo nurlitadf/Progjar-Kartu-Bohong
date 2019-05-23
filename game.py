@@ -65,6 +65,7 @@ class Game:
         while self.player_decks[self.players[idx]].empty():
             idx = (idx + 1) % len(self.players)
             print('[IDX]', idx)
+            idx+=1
         print('[IDX]', idx)
         self.turn = self.players[idx]
 
