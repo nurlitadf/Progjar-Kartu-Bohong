@@ -80,11 +80,11 @@ def render_scoreboard():
     myfont = pygame.font.SysFont('Comic Sans MS', 30)
     f = open("logic/score.txt", "r")
     f1 = f.readlines()
-    y=30
+    y = 30
     for score in f1:
         textsurface = myfont.render(score[:-1], False, (0, 0, 0))
-        screen.blit(textsurface,(30,y))
-        y=y+30
+        screen.blit(textsurface, (30, y))
+        y = y+30
 
 
 root = tkinter.Tk()
@@ -105,6 +105,7 @@ game_status = "Ready"
 
 pygame.init()
 pygame.font.init()
+pygame.display.set_caption("Kartu Bohong - Player {}".format(username))
 
 screen = pygame.display.set_mode((1200, 675))
 
@@ -131,8 +132,8 @@ for f in os.listdir(path):
     if hit < 7:
         button_num.append(ButtonNumber(os.path.join(path, f), 995 + 28*hit, 575))
     else:
-        button_num.append(ButtonNumber(os.path.join(path, f), 995 + 28*(hit%7), 605))
-    hit+=1
+        button_num.append(ButtonNumber(os.path.join(path, f), 995 + 28*(hit % 7), 605))
+    hit += 1
 
 path = "assets/card"
 #list_path = [os.path.join(path, f) for f in os.listdir(path)]
@@ -166,7 +167,6 @@ while Flag:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 Flag = False
-                
 
             if event.type == pygame.MOUSEBUTTONUP:
                 if button_ready.button_clicked():
@@ -184,11 +184,11 @@ while Flag:
                 Flag = False
 
         if GAME_DATA is not None:
-            game_status =  "Playing"
-    
+            game_status = "Playing"
+
     elif game_status == "Playing":
         pygame.display.flip()
-        #print(GAME_DATA['player_decks']['a'])
+        # print(GAME_DATA['player_decks']['a'])
 
         if not game_start:
             game_start = True
@@ -216,7 +216,7 @@ while Flag:
         screen.blit(kartu_kiri, (0, 247.5))
         screen.blit(kartu_kanan, (1080, 247.5))
 
-        #draw the buttons
+        # draw the buttons
         place_card.draw(screen)
         liar_button.draw(screen)
 
@@ -228,15 +228,13 @@ while Flag:
 
         for card in active_card:
             card.draw(screen)
-        
+
         for card in middle_card:
             card.draw(screen)
 
-        #print(num_clicked)
+        # print(num_clicked)
         num_text = myfont.render(num_clicked, True, (255, 255, 255))
-        screen.blit(num_text,(920,540))
-
-
+        screen.blit(num_text, (920, 540))
 
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONUP:
@@ -248,10 +246,10 @@ while Flag:
                         c.to_stack(450, 300-hit_middle*3)
                         middle_card.append(c)
 
-                        hit_middle+=1
+                        hit_middle += 1
 
                     active_card = []
-                    
+
                     hit = 0
 
                     active_card_idx = []
@@ -259,23 +257,19 @@ while Flag:
                     for i in range(len(my_cards)):
                         if my_cards[i].status == 1:
                             active_card_idx.append(i)
-                            
 
                     for c in my_cards[:]:
                         if(c.status == 1):
                             active_card.append(CardPlaced(c.path, 550 + hit*80, 300))
-                        
+
                             my_cards.remove(c)
                             paths.remove(c.path)
                             del c
 
-                            hit+=1
-                    
+                            hit += 1
+
                     make_message('PICK', SELECTED=active_card_idx, STATEMENT=num_clicked)
 
-
-                    
-                
                 if liar_button.button_clicked():
                     print("liar button")
                     # for c in active_card:
@@ -294,14 +288,14 @@ while Flag:
 
                     # for i in range(len(paths)):
                     #     my_cards.append(Card(paths[i], pos_my_cards[i][0], pos_my_cards[i][1]))
-                    
+
                     # hit_middle = 0
 
                 for b in button_num:
                     flag, num = b.button_clicked()
                     if flag:
                         num_clicked = num
-                
+
             if event.type == pygame.QUIT:
                 Flag = False
 
@@ -313,7 +307,6 @@ exit(0)
 
 # # if game_status == "Waiting":
 # #         screen.blit(background_waiting, (0, 0))
-
 
 
 # #         for event in pygame.event.get():
