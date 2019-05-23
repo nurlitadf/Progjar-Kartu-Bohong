@@ -6,7 +6,7 @@ import time
 from queue import Queue
 
 from _thread import start_new_thread
-from component import CARD_MAPPING, Card, CardPlaced, Deck
+from component import CARD_MAPPING, Card, CardPlaced, Deck, VAL_TO_CARD
 from game import Game
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -145,6 +145,7 @@ def lie_or_not_phase():
         if statement:
             clear_queue()
             verdict = game.card_placed.check()
+            recently_placed_cards=game.card_placed.cards[-1]
             pile = game.card_placed.get_cards()
             if verdict:             # ternyata jujur, tebakan salah
                 victim = name
@@ -153,11 +154,12 @@ def lie_or_not_phase():
                 victim = game.turn
                 next_turn = name
             if verdict:
-                msg = "Player {} guess is wrong, player {} is honest, player {}'s cards are ".format(name, game.turn, name)
+                msg = "Player {} guess is wrong, player {} is honest, player {}'s cards are ".format(name, game.turn, game.turn)
             else:
-                msg = "Player {} guess is correct, player {} is liar, player {}'s cards are ".format(name, game.turn, name)
-            for card in pile:
+                msg = "Player {} guess is correct, player {} is liar, player {}'s cards are ".format(name, game.turn, game.turn)
+            for card in recently_placed_cards:
                 msg=msg+str(card)+" "
+            game.previous_card=None
             game.is_someone_win(game.turn)
             game.player_decks[victim].extend(pile)
             game.check_quad_deck()
@@ -166,6 +168,7 @@ def lie_or_not_phase():
             make_message(msg)
             is_game_over()
             return
+    game.previous_card=VAL_TO_CARD[game.card_placed.values[-1]]
     game.is_someone_win(game.turn)
     is_game_over()
     game.state = 'pick'

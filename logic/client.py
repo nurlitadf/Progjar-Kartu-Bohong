@@ -89,7 +89,11 @@ while True:
             print()
             selected = input("Select cards >>")
             selected = list(map(int, selected.split()))
-            statement = input("Statement>>")
+            if(GAME_DATA['previous_card']==None): 
+                statement = input("Statement>>")
+            else:
+                statement=GAME_DATA['previous_card']
+                print("Statement>>"+statement)
             make_message('PICK', SELECTED=selected, STATEMENT=statement)
         else:
             print("Now {} is picking cards".format(GAME_DATA['turn']))

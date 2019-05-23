@@ -28,23 +28,24 @@ class Game:
         self.turn = ""
         self.winner = []
         self.sorted_score_list=[]
+        self.previous_card=None
 
     def add_players(self, name: str):
         self.players.append(name)
 
     def create_decks(self):
         decks = []
-        # for suit in ['spade', 'heart', 'diamond', 'club']:
-        for suit in ['spade']:
-            # for name in list(range(2, 11)) + ['J', 'Q', 'K', 'A']:
-            for name in list(range(2, 6)):
+        for suit in ['spade', 'heart', 'diamond', 'club']:
+        # for suit in ['spade']:
+            for name in list(range(2, 11)) + ['J', 'Q', 'K', 'A']:
+            # for name in list(range(2, 6)):
                 decks.append([str(name), suit])
         random.shuffle(decks)
 
         player_decks = {}
         for i, player in enumerate(self.players):
-            # temp_deck = decks[i * 13:(i + 1) * 13]
-            temp_deck = decks[i * 1:(i + 1) * 1]
+            temp_deck = decks[i * 13:(i + 1) * 13]
+            # temp_deck = decks[i * 1:(i + 1) * 1]
             new_deck = Deck()
             for card in temp_deck:
                 new_deck.add(Card(card[0], card[1]))
