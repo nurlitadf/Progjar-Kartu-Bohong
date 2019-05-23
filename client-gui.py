@@ -40,6 +40,36 @@ def make_message(message, **kwargs):
     server.send(data)
 
 
+def debug_data(data: dict):
+    print('='*20)
+    print('======[DEBUG]======')
+
+    def recur(data: dict):
+        for key, val in data.items():
+            if isinstance(val, dict):
+                print(key)
+                recur(val)
+            else:
+                print(key, val)
+    recur(data)
+    print('='*20)
+
+
+def receive():
+    global GAME_DATA, MESSAGE
+    while True:
+        data = server.recv(BUFFER_SIZE)
+        data = pickle.loads(data)
+        debug_data(data)
+        MESSAGE = data['MSG']
+        if(MESSAGE == "DONE"):
+            print("Ranking:")
+            print(data['WINNER'])
+            print("Scoreboard:")
+            print(data['SCOREBOARD'])
+        GAME_DATA = data['GAME']
+
+
 root = tkinter.Tk()
 root.title('Input Your Username')
 
@@ -67,6 +97,13 @@ pygame.display.set_caption("Kartu Bohong")
 ready = Button('assets/button/play.png', 0, 100)
 # sampe sini
 
+"""
+STATE
+1. pick
+2. lie_or_not
+3. finish
+"""
+
 while True:
     pygame.display.flip()
     ready.draw(screen)
@@ -77,3 +114,17 @@ while True:
         if event.type == pygame.MOUSEBUTTONUP:
             if ready.button_clicked():
                 make_message("READY")
+                break
+
+# Pertama kali terima data state game dari server
+data = server.recv(BUFFER_SIZE)
+data = pickle.loads(data)
+debug_data(data)
+GAME_DATA = data['GAME']
+MESSAGE = data['MSG']
+start_new_thread(receive, ())
+num_winner = len(GAME_DATA['winner'])
+
+# Masuk View main game
+while True:
+    pass
