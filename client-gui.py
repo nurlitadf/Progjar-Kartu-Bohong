@@ -123,7 +123,7 @@ kartu_atas = pygame.image.load("assets/atas.png")
 
 place_card = Button("assets/placecard.png", 1087, 537)
 liar_button = Button("assets/liar.png", 100, 550)
-
+honest_button = Button("assets/honest_.png", 220, 550)
 button_num = []
 
 path = "assets/angka"
@@ -217,11 +217,15 @@ while Flag:
         screen.blit(kartu_kanan, (1080, 247.5))
 
         # draw the buttons
-        place_card.draw(screen)
-        liar_button.draw(screen)
+        if GAME_DATA['turn'] == username and GAME_DATA['state'] == 'pick':
+            place_card.draw(screen)
+        if GAME_DATA['turn'] != username and GAME_DATA['state'] == 'lie_or_not':
+            liar_button.draw(screen)
+            honest_button.draw(screen)
 
-        for button in button_num:
-            button.draw(screen)
+        if GAME_DATA['turn'] == username and GAME_DATA['state'] == 'pick':
+            for button in button_num:
+                button.draw(screen)
 
         for card in my_cards:
             card.draw(screen)
@@ -233,8 +237,9 @@ while Flag:
             card.draw(screen)
 
         # print(num_clicked)
-        num_text = myfont.render(num_clicked, True, (255, 255, 255))
-        screen.blit(num_text, (920, 540))
+        if GAME_DATA['turn'] == username and GAME_DATA['state'] == 'pick':
+            num_text = myfont.render(num_clicked, True, (255, 255, 255))
+            screen.blit(num_text, (920, 540))
 
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONUP:

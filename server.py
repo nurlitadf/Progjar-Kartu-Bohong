@@ -78,7 +78,7 @@ def make_message(message: str):
 def player_ready():
     global game, ready_counter
     ready_counter += 1
-    if ready_counter == 2: #INI DIUBAH JADI 4
+    if ready_counter == 2:  # INI DIUBAH JADI 4
         time.sleep(1)
         game.start = True
         game.create_decks()
@@ -203,7 +203,7 @@ def gameplay():
 
 start_new_thread(gameplay, ())
 while True:
-    if len(list_of_clients) < 2: #INI DIUBAH KE 4
+    if len(list_of_clients) < 2:  # INI DIUBAH KE 4
         conn, addr = server.accept()
         list_of_clients.append(conn)
         print(addr[0] + " connected")
