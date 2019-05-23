@@ -157,6 +157,7 @@ STATE
 
 start_new_thread(receive, ())
 Flag = True
+has_click_lie_or_not = False
 
 while Flag:
     if game_status == "Ready":
@@ -189,6 +190,9 @@ while Flag:
     elif game_status == "Playing":
         pygame.display.flip()
         # print(GAME_DATA['player_decks']['a'])
+
+        if GAME_DATA['state'] != 'lie_or_not':
+            has_click_lie_or_not = False
 
         if not game_start:
             game_start = True
@@ -238,6 +242,8 @@ while Flag:
 
         # print(num_clicked)
         if GAME_DATA['turn'] == username and GAME_DATA['state'] == 'pick':
+            if GAME_DATA['previous_card'] is not None:
+                num_clicked = GAME_DATA['previous_card']
             num_text = myfont.render(num_clicked, True, (255, 255, 255))
             screen.blit(num_text, (920, 540))
 
@@ -272,11 +278,20 @@ while Flag:
                             del c
 
                             hit += 1
+                    if len(active_card_idx) > 0:
+                        if GAME_DATA['previous_card'] is not None:
+                            num_clicked = GAME_DATA['previous_card']
+                        make_message('PICK', SELECTED=active_card_idx, STATEMENT=num_clicked)
 
-                    make_message('PICK', SELECTED=active_card_idx, STATEMENT=num_clicked)
+                if honest_button.button_clicked() and not has_click_lie_or_not:
+                    print("honest")
+                    has_click_lie_or_not = True
+                    make_message('LIE', LIE=False)
 
-                if liar_button.button_clicked():
+                if liar_button.button_clicked() and not has_click_lie_or_not:
                     print("liar button")
+                    has_click_lie_or_not = True
+                    make_message('LIE', LIE=True)
                     # for c in active_card:
                     #     middle_card.append(c)
 
@@ -296,10 +311,11 @@ while Flag:
 
                     # hit_middle = 0
 
-                for b in button_num:
-                    flag, num = b.button_clicked()
-                    if flag:
-                        num_clicked = num
+                if GAME_DATA['previous_card'] is None:
+                    for b in button_num:
+                        flag, num = b.button_clicked()
+                        if flag:
+                            num_clicked = num
 
             if event.type == pygame.QUIT:
                 Flag = False
