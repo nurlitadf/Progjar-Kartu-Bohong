@@ -42,4 +42,5 @@ for i, player in enumerate(players):
     print(temp_deck)
 
 idx=1
+idx+=1
 print('[IDX]', idx)
