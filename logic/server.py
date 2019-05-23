@@ -82,6 +82,7 @@ def player_ready():
         time.sleep(1)
         game.start = True
         game.create_decks()
+        game.check_quad_deck()
         game.next_turn()
         game.state = 'pick'
         # debug_data(game.__dict__)
@@ -122,6 +123,16 @@ def client_thread(conn, addr):
         except:
             remove(conn)
 
+def is_game_over():
+    if(game.is_everyone_win()):
+        game.update_score()
+        winner={}
+        winner['MSG']="DONE"
+        winner['WINNER']=game.winner
+        winner['SCOREBOARD']=game.sorted_score_list
+        winner['GAME'] = game.__dict__
+        winner = pickle.dumps(winner)
+        broadcast(winner)
 
 def lie_or_not_phase():
     global game, LIE_QUEUE
@@ -142,34 +153,21 @@ def lie_or_not_phase():
                 victim = game.turn
                 next_turn = name
             if verdict:
-                msg = "Player {} guess is wrong, player {} is honest".format(name, game.turn)
+                msg = "Player {} guess is wrong, player {} is honest, player {}'s cards are ".format(name, game.turn, name)
             else:
-                msg = "Player {} guess is correct, player {} is liar".format(name, game.turn)
+                msg = "Player {} guess is correct, player {} is liar, player {}'s cards are ".format(name, game.turn, name)
+            for card in pile:
+                msg=msg+str(card)+" "
             game.is_someone_win(game.turn)
             game.player_decks[victim].extend(pile)
+            game.check_quad_deck()
             game.turn = next_turn
             game.state = 'pick'
             make_message(msg)
-            if(game.is_everyone_win()):
-                game.update_score()
-                winner={}
-                winner['MSG']="DONE"
-                winner['WINNER']=game.winner
-                winner['SCOREBOARD']=game.sorted_score_list
-                winner['GAME'] = game.__dict__
-                winner = pickle.dumps(winner)
-                broadcast(winner)
+            is_game_over()
             return
     game.is_someone_win(game.turn)
-    if(game.is_everyone_win()):
-        game.update_score()
-        winner={}
-        winner['MSG']="DONE"
-        winner['WINNER']=game.winner
-        winner['SCOREBOARD']=game.sorted_score_list
-        winner['GAME'] = game.__dict__
-        winner = pickle.dumps(winner)
-        broadcast(winner)
+    is_game_over()
     game.state = 'pick'
     game.next_turn()
     make_message("CONTINUE")
