@@ -2,11 +2,15 @@ import pickle
 import socket
 import sys
 import time
+import os
 
 import pygame
 import tkinter
 from _thread import start_new_thread
-from button import Button
+
+from button import *
+from card import *
+from utils import *
 
 GAME_DATA = None
 MESSAGE = ""
@@ -110,11 +114,38 @@ background_waiting = pygame.image.load("assets/bg1.jpg")
 background_main = pygame.image.load("assets/bg2.jpg")
 
 button_ready = Button('assets/button/play.png', 625, 300)
+game_start = False
 
+kartu_kiri = pygame.image.load("assets/kiri.png")
+kartu_kanan = pygame.image.load("assets/kanan.png")
+kartu_atas = pygame.image.load("assets/atas.png")
 
+place_card = Button("assets/placecard.png", 1087, 537)
+liar_button = Button("assets/liar.png", 100, 550)
 
+button_num = []
 
+path = "assets/angka"
+hit = 0
+for f in os.listdir(path):
+    if hit < 7:
+        button_num.append(ButtonNumber(os.path.join(path, f), 995 + 28*hit, 575))
+    else:
+        button_num.append(ButtonNumber(os.path.join(path, f), 995 + 28*(hit%7), 605))
+    hit+=1
 
+path = "assets/card"
+#list_path = [os.path.join(path, f) for f in os.listdir(path)]
+
+paths = None
+pos_my_cards = None
+my_cards = []
+
+num_clicked = "0"
+
+middle_card = []
+hit_middle = 0
+active_card = []
 
 """
 STATE
@@ -124,7 +155,6 @@ STATE
 """
 
 start_new_thread(receive, ())
-
 Flag = True
 
 while Flag:
@@ -158,7 +188,58 @@ while Flag:
     
     elif game_status == "Playing":
         pygame.display.flip()
+        #print(GAME_DATA['player_decks']['a'])
+
+        if not game_start:
+            game_start = True
+            temp = eval(str(GAME_DATA['player_decks'][username]))
+
+            # print(eval(str(my_card_data)))
+            # print(type(my_card_data))
+
+            my_card_data = []
+
+            for c in temp:
+                c = c.replace('diamond', '1.png')
+                c = c.replace('spade', '2.png')
+                c = c.replace('heart', '3.png')
+                c = c.replace('club', '4.png')
+
+                c = c.lower()
+
+                my_card_data.append(c)
+
+            paths = [os.path.join(path, f) for f in my_card_data]
+            pos_my_cards = get_position_my_cards(len(my_card_data))
+
+            my_cards = [Card(paths[i], pos_my_cards[i][0], pos_my_cards[i][1]) for i in range(len(paths))]
+
         screen.blit(background_main, (0, 0))
+        screen.blit(kartu_atas, (510, 0))
+        screen.blit(kartu_kiri, (0, 247.5))
+        screen.blit(kartu_kanan, (1080, 247.5))
+
+        #draw the buttons
+        place_card.draw(screen)
+        liar_button.draw(screen)
+
+        for button in button_num:
+            button.draw(screen)
+
+        for card in my_cards:
+            card.draw(screen)
+
+        for card in active_card:
+            card.draw(screen)
+        
+        for card in middle_card:
+            card.draw(screen)
+
+        #print(num_clicked)
+        num_text = myfont.render(num_clicked, True, (255, 255, 255))
+        screen.blit(num_text,(920,540))
+
+
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

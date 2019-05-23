@@ -38,7 +38,7 @@ myfont = pygame.font.SysFont('Comic Sans MS', 24)
 print(username)
 
 screen = pygame.display.set_mode((1200, 675))
-background = pygame.image.load("assets/bg.jpg")
+background = pygame.image.load("assets/bg2.jpg")
 
 kartu_kiri = pygame.image.load("assets/kiri.png")
 kartu_kanan = pygame.image.load("assets/kanan.png")
@@ -70,6 +70,7 @@ list_path = [os.path.join(path, f) for f in os.listdir(path)]
 
 #pilih 13 card random
 paths = random.sample(list_path, 13)
+print(paths)
 pos_my_cards = get_position_my_cards(13)
 
 my_cards = [Card(paths[i], pos_my_cards[i][0], pos_my_cards[i][1]) for i in range(len(paths))]
