@@ -65,7 +65,6 @@ class Game:
         while self.player_decks[self.players[idx]].empty():
             idx = (idx + 1) % len(self.players)
             print('[IDX]', idx)
-            idx+=1
         print('[IDX]', idx)
         self.turn = self.players[idx]
 
@@ -73,30 +72,31 @@ class Game:
         pass
 
     def update_score(self):
-        f = open("score.txt", "r")
-        f1 = f.readlines()
-        score_list = {}
-        for x in f1:
-            name = x.split(' ')[0]
-            score = int(x.split(' ')[1])
-            score_list[name] = score
-        f.close()
-        score = 300
-        for winner in self.winner:
-            if(score_list.get(winner) == None):
-                score_list[winner] = score
-            else:
-                score_list[winner] = int(score_list[winner])+score
-            score = score-100
-        self.sorted_score_list = sorted(score_list.items(), key=operator.itemgetter(1), reverse=True)
-        f = open("score.txt", "w")
-        for ranking in self.sorted_score_list:
-            print(ranking)
-            f.write(ranking[0]+' '+str(ranking[1])+'\n')
-        f.close()
+        scores = {}
+        self.sorted_score_list = []
+        for i, player in enumerate(self.winner):
+            score = 300 - i*300
+            self.sorted_score_list.append((player, score))
+        self.save_score()
 
     def save_score(self):
-        pass
+        with open("score.txt", "r") as f:
+            file_content = f.readlines()
+        scores = {}
+        for row in file_content:
+            name, score = row.split(' ')
+            scores[name] = int(score)
+
+        for player, score in self.sorted_score_list:
+            if player in scores:
+                scores[player] += score
+            else:
+                scores[player] = score
+        sorted_scores = sorted(scores.items(), key=operator.itemgetter(1), reverse=True)
+        with open("score.txt", "w") as f:
+            for data in sorted_scores:
+                text = "{} {}\n".format(data[0], data[1])
+                f.write(text)
 
     def is_someone_win(self, player):
         if self.player_decks[player].empty():
