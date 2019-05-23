@@ -12,6 +12,8 @@ from button import *
 from card import *
 from utils import *
 
+from component import VAL_TO_CARD
+
 GAME_DATA = None
 MESSAGE = ""
 BUFFER_SIZE = 4096
@@ -60,7 +62,7 @@ def debug_data(data: dict):
 
 
 def receive():
-    global GAME_DATA, MESSAGE
+    global GAME_DATA, MESSAGE, my_cards, username, path, paths, middle_card
     while True:
         data = server.recv(BUFFER_SIZE)
         data = pickle.loads(data)
@@ -72,6 +74,33 @@ def receive():
             print("Scoreboard:")
             print(data['SCOREBOARD'])
         GAME_DATA = data['GAME']
+
+        temp = eval(str(GAME_DATA['player_decks'][username]))
+
+        my_card_data = []
+
+        for c in temp:
+            c = c.replace('diamond', '1.png')
+            c = c.replace('spade', '2.png')
+            c = c.replace('heart', '3.png')
+            c = c.replace('club', '4.png')
+
+            my_card_data.append(c)
+
+        paths = [os.path.join(path, f) for f in my_card_data]
+        pos_my_cards = get_position_my_cards(len(my_card_data))
+
+        my_cards = [Card(paths[i], pos_my_cards[i][0], pos_my_cards[i][1]) for i in range(len(paths))]
+
+        temp = len(GAME_DATA['card_placed'])
+
+        # print("-------------------------", temp)
+
+        middle_card = []
+
+        for i in range(temp):
+            middle_card.append(Card("assets/x.png", 450, 300-i*3))
+
 
 
 def render_scoreboard():
@@ -159,6 +188,9 @@ start_new_thread(receive, ())
 Flag = True
 has_click_lie_or_not = False
 
+console_message = ""
+state_now = ""
+
 while Flag:
     if game_status == "Ready":
         pygame.display.flip()
@@ -194,27 +226,8 @@ while Flag:
         if GAME_DATA['state'] != 'lie_or_not':
             has_click_lie_or_not = False
 
-        if not game_start:
-            game_start = True
-            temp = eval(str(GAME_DATA['player_decks'][username]))
-
-            my_card_data = []
-
-            for c in temp:
-                c = c.replace('diamond', '1.png')
-                c = c.replace('spade', '2.png')
-                c = c.replace('heart', '3.png')
-                c = c.replace('club', '4.png')
-
-                c = c.lower()
-
-                my_card_data.append(c)
-
-            paths = [os.path.join(path, f) for f in my_card_data]
-            pos_my_cards = get_position_my_cards(len(my_card_data))
-
-            my_cards = [Card(paths[i], pos_my_cards[i][0], pos_my_cards[i][1]) for i in range(len(paths))]
-
+        
+        
         screen.blit(background_main, (0, 0))
         screen.blit(kartu_atas, (510, 0))
         screen.blit(kartu_kiri, (0, 247.5))
@@ -240,6 +253,51 @@ while Flag:
         for card in middle_card:
             card.draw(screen)
 
+        if username not in GAME_DATA['winner']:
+            if (GAME_DATA['state'] == 'pick'):
+                turn = "It's Player {} Turn".format(GAME_DATA['turn'])
+                console_turn = myfont.render(console_message, True, (255, 255, 255))
+                screen.blit(console_txt, (30, 30))
+
+
+                if username == GAME_DATA['turn']:
+                    if not GAME_DATA['card_placed'].is_empty():
+                        num_cards = len(GAME_DATA['card_placed'])
+                        last_val = VAL_TO_CARD[GAME_DATA['card_placed'].values[-1]]
+
+                        console_message = '[Curently there are {} cards of {}]'.format(num_cards, last_val)
+                    else:
+                        console_message = ""
+                
+                else:
+                    console_message = "Now {} is picking cards".format(GAME_DATA['turn'])
+                    for c in active_card[:]:
+                       active_card.remove(c)
+                       del c
+
+                    active_card = []
+
+                console_txt = myfont.render(console_message, True, (255, 255, 255))
+                screen.blit(console_txt, (30, 60))
+        
+        if GAME_DATA['state'] == 'lie_or_not':
+            if username != GAME_DATA['turn']:
+                num_card = len(GAME_DATA['card_placed'].cards[-1])
+                card_name = VAL_TO_CARD[GAME_DATA['card_placed'].values[-1]]
+                msg = "player {} put {} {} cards".format(
+                    GAME_DATA['turn'],
+                    num_card,
+                    card_name
+                )
+                console_message = msg
+            else:
+                console_message = "Wait for other players"
+            
+            console_txt = myfont.render(console_message, True, (255, 255, 255))
+            screen.blit(console_txt, (30, 60))
+
+            
+
         # print(num_clicked)
         if GAME_DATA['turn'] == username and GAME_DATA['state'] == 'pick':
             if GAME_DATA['previous_card'] is not None:
@@ -253,14 +311,8 @@ while Flag:
                     c.card_clicked()
 
                 if place_card.button_clicked():
-                    for c in active_card:
-                        c.to_stack(450, 300-hit_middle*3)
-                        middle_card.append(c)
-
-                        hit_middle += 1
 
                     active_card = []
-
                     hit = 0
 
                     active_card_idx = []
@@ -272,12 +324,8 @@ while Flag:
                     for c in my_cards[:]:
                         if(c.status == 1):
                             active_card.append(CardPlaced(c.path, 550 + hit*80, 300))
+                            hit+=1
 
-                            my_cards.remove(c)
-                            paths.remove(c.path)
-                            del c
-
-                            hit += 1
                     if len(active_card_idx) > 0:
                         if GAME_DATA['previous_card'] is not None:
                             num_clicked = GAME_DATA['previous_card']
@@ -292,24 +340,7 @@ while Flag:
                     print("liar button")
                     has_click_lie_or_not = True
                     make_message('LIE', LIE=True)
-                    # for c in active_card:
-                    #     middle_card.append(c)
-
-                    # active_card = []
-
-                    # for c in middle_card[:]:
-                    #     paths.append(c.path)
-                    #     middle_card.remove(c)
-                    #     del c
-
-                    # pos_my_cards = get_position_my_cards(len(paths))
-                    # del my_cards
-                    # my_cards = []
-
-                    # for i in range(len(paths)):
-                    #     my_cards.append(Card(paths[i], pos_my_cards[i][0], pos_my_cards[i][1]))
-
-                    # hit_middle = 0
+                    
 
                 if GAME_DATA['previous_card'] is None:
                     for b in button_num:
