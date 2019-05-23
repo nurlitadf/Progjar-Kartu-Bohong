@@ -70,6 +70,19 @@ def receive():
         GAME_DATA = data['GAME']
 
 
+def render_scoreboard():
+    screen.fill(green)
+    pygame.font.init()
+    myfont = pygame.font.SysFont('Comic Sans MS', 30)
+    f = open("logic/score.txt", "r")
+    f1 = f.readlines()
+    y=30
+    for score in f1:
+        textsurface = myfont.render(score[:-1], False, (0, 0, 0))
+        screen.blit(textsurface,(30,y))
+        y=y+30
+
+
 root = tkinter.Tk()
 root.title('Input Your Username')
 
