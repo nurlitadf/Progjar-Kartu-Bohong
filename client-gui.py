@@ -104,10 +104,11 @@ def receive():
 
 
 def render_scoreboard():
-    screen.fill(green)
+    global screen
+
     pygame.font.init()
     myfont = pygame.font.SysFont('Comic Sans MS', 30)
-    f = open("logic/score.txt", "r")
+    f = open("score.txt", "r")
     f1 = f.readlines()
     y = 30
     for score in f1:
@@ -139,6 +140,7 @@ pygame.display.set_caption("Kartu Bohong - Player {}".format(username))
 screen = pygame.display.set_mode((1200, 675))
 
 myfont = pygame.font.SysFont('Comic Sans MS', 24)
+background_score = pygame.image.load("assets/bg.jpg")
 background_ready = pygame.image.load("assets/bg0.jpg")
 background_waiting = pygame.image.load("assets/bg1.jpg")
 background_main = pygame.image.load("assets/bg2.jpg")
@@ -192,6 +194,10 @@ console_message = ""
 state_now = ""
 
 while Flag:
+    if GAME_DATA is not None and username in GAME_DATA['winner']:
+        screen.blit(background_score, (0, 0))
+        render_scoreboard()
+
     if game_status == "Ready":
         pygame.display.flip()
         screen.blit(background_ready, (0, 0))
@@ -257,7 +263,7 @@ while Flag:
             if (GAME_DATA['state'] == 'pick'):
                 turn = "It's Player {} Turn".format(GAME_DATA['turn'])
                 console_turn = myfont.render(console_message, True, (255, 255, 255))
-                screen.blit(console_txt, (30, 30))
+                screen.blit(console_turn, (30, 30))
 
 
                 if username == GAME_DATA['turn']:
