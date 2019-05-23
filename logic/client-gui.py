@@ -91,12 +91,6 @@ pygame.font.init()
 
 screen = pygame.display.set_mode((1200, 675))
 
-# Ntar ganti biar bagus
-# green = [39, 102, 23]
-# screen.fill(green)
-# pygame.display.set_caption("Kartu Bohong")
-# ready = Button('assets/button/play.png', 0, 100)
-
 myfont = pygame.font.SysFont('Comic Sans MS', 24)
 background_ready = pygame.image.load("assets/bg0.jpg")
 background_waiting = pygame.image.load("assets/bg1.jpg")
@@ -105,7 +99,9 @@ background_main = pygame.image.load("assets/bg2.jpg")
 button_ready = Button('assets/button/play.png', 625, 300)
 
 
-# sampe sini
+
+
+
 
 """
 STATE
@@ -116,18 +112,19 @@ STATE
 
 start_new_thread(receive, ())
 
-while True:
-    pygame.display.flip()
-    screen.fill(0)
+Flag = True
 
+while Flag:
     if game_status == "Ready":
+        pygame.display.flip()
         screen.blit(background_ready, (0, 0))
         button_ready.draw(screen)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                exit(0)
+                Flag = False
+                
+
             if event.type == pygame.MOUSEBUTTONUP:
                 if button_ready.button_clicked():
                     make_message("READY")
@@ -135,21 +132,27 @@ while True:
 
                     game_status = "Waiting"
 
-    if game_status == "Waiting":
+    elif game_status == "Waiting":
+        pygame.display.flip()
         screen.blit(background_waiting, (0, 0))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                exit(0)
+                Flag = False
 
         if GAME_DATA is not None:
             game_status =  "Playing"
     
-    if game_status == "Playing":
+    elif game_status == "Playing":
+        pygame.display.flip()
         screen.blit(background_main, (0, 0))
 
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                Flag = False
 
+pygame.quit()
+exit(0)
 
 # # num_winner = len(GAME_DATA['winner'])
 
