@@ -62,7 +62,7 @@ def debug_data(data: dict):
 
 
 def receive():
-    global GAME_DATA, MESSAGE, my_cards, username, path, paths, middle_card
+    global GAME_DATA, MESSAGE, my_cards, username, path, paths, middle_card, active_card
     while True:
         data = server.recv(BUFFER_SIZE)
         data = pickle.loads(data)
@@ -92,7 +92,7 @@ def receive():
 
         my_cards = [Card(paths[i], pos_my_cards[i][0], pos_my_cards[i][1]) for i in range(len(paths))]
 
-        temp = len(GAME_DATA['card_placed'])
+        temp = len(GAME_DATA['card_placed']) - len(active_card)
 
         # print("-------------------------", temp)
 
@@ -193,6 +193,7 @@ has_click_lie_or_not = False
 console_message = ""
 state_now = ""
 
+
 while Flag:
     if GAME_DATA is not None and username in GAME_DATA['winner']:
         screen.blit(background_score, (0, 0))
@@ -232,8 +233,6 @@ while Flag:
         if GAME_DATA['state'] != 'lie_or_not':
             has_click_lie_or_not = False
 
-        
-        
         screen.blit(background_main, (0, 0))
         screen.blit(kartu_atas, (510, 0))
         screen.blit(kartu_kiri, (0, 247.5))
@@ -262,7 +261,7 @@ while Flag:
         if username not in GAME_DATA['winner']:
             if (GAME_DATA['state'] == 'pick'):
                 turn = "It's Player {} Turn".format(GAME_DATA['turn'])
-                console_turn = myfont.render(console_message, True, (255, 255, 255))
+                console_turn = myfont.render(turn, True, (255, 255, 255))
                 screen.blit(console_turn, (30, 30))
 
 
@@ -359,20 +358,3 @@ while Flag:
 
 pygame.quit()
 exit(0)
-
-# # num_winner = len(GAME_DATA['winner'])
-
-
-# # if game_status == "Waiting":
-# #         screen.blit(background_waiting, (0, 0))
-
-
-# #         for event in pygame.event.get():
-# #             if event.type == pygame.QUIT:
-# #                 pygame.quit()
-# #                 exit(0)
-
-
-# # Masuk View main game
-# while True:
-#     pass
