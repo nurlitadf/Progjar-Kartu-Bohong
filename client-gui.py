@@ -102,17 +102,19 @@ def receive():
             middle_card.append(Card("assets/x.png", 450, 300-i*3))
 
 
-
 def render_scoreboard():
-    global screen
+    global screen, GAME_DATA
 
     pygame.font.init()
     myfont = pygame.font.SysFont('Comic Sans MS', 30)
-    f = open("score.txt", "r")
-    f1 = f.readlines()
+    scores = GAME_DATA['alltime_score_list']
+    # f = open("score.txt", "r")
+    # f1 = f.readlines()
     y = 30
-    for score in f1:
-        textsurface = myfont.render(score[:-1], False, (0, 0, 0))
+    for name, score in scores:
+        # name, sco = score.split()
+        text = "{:20s} {:5d}".format(name, int(score))
+        textsurface = myfont.render(text, False, (255, 255, 255))
         screen.blit(textsurface, (30, y))
         y = y+30
 
@@ -264,7 +266,6 @@ while Flag:
                 console_turn = myfont.render(turn, True, (255, 255, 255))
                 screen.blit(console_turn, (30, 30))
 
-
                 if username == GAME_DATA['turn']:
                     if not GAME_DATA['card_placed'].is_empty():
                         num_cards = len(GAME_DATA['card_placed'])
@@ -273,18 +274,18 @@ while Flag:
                         console_message = '[Curently there are {} cards of {}]'.format(num_cards, last_val)
                     else:
                         console_message = ""
-                
+
                 else:
                     console_message = "Now {} is picking cards".format(GAME_DATA['turn'])
                     for c in active_card[:]:
-                       active_card.remove(c)
-                       del c
+                        active_card.remove(c)
+                        del c
 
                     active_card = []
 
                 console_txt = myfont.render(console_message, True, (255, 255, 255))
                 screen.blit(console_txt, (30, 60))
-        
+
         if GAME_DATA['state'] == 'lie_or_not':
             if username != GAME_DATA['turn']:
                 num_card = len(GAME_DATA['card_placed'].cards[-1])
@@ -297,11 +298,9 @@ while Flag:
                 console_message = msg
             else:
                 console_message = "Wait for other players"
-            
+
             console_txt = myfont.render(console_message, True, (255, 255, 255))
             screen.blit(console_txt, (30, 60))
-
-            
 
         # print(num_clicked)
         if GAME_DATA['turn'] == username and GAME_DATA['state'] == 'pick':
@@ -329,7 +328,7 @@ while Flag:
                     for c in my_cards[:]:
                         if(c.status == 1):
                             active_card.append(CardPlaced(c.path, 550 + hit*80, 300))
-                            hit+=1
+                            hit += 1
 
                     if len(active_card_idx) > 0:
                         if GAME_DATA['previous_card'] is not None:
@@ -345,7 +344,6 @@ while Flag:
                     print("liar button")
                     has_click_lie_or_not = True
                     make_message('LIE', LIE=True)
-                    
 
                 if GAME_DATA['previous_card'] is None:
                     for b in button_num:

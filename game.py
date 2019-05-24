@@ -28,6 +28,7 @@ class Game:
         self.turn = ""
         self.winner = []
         self.sorted_score_list = []
+        self.alltime_score_list = []
         self.previous_card = None
 
     def add_players(self, name: str):
@@ -36,7 +37,7 @@ class Game:
     def create_decks(self):
         decks = []
         for suit in ['spade', 'heart', 'diamond', 'club']:
-            # for suit in ['spade']:
+            # for suit in ['spade', 'heart']:
             for name in list(range(2, 11)) + ['J', 'Q', 'K', 'A']:
                 # for name in list(range(2, 6)):
                 decks.append([str(name), suit])
@@ -80,6 +81,7 @@ class Game:
         self.save_score()
 
     def save_score(self):
+        self.alltime_score_list = []
         with open("score.txt", "r") as f:
             file_content = f.readlines()
         scores = {}
@@ -93,6 +95,7 @@ class Game:
             else:
                 scores[player] = score
         sorted_scores = sorted(scores.items(), key=operator.itemgetter(1), reverse=True)
+        self.alltime_score_list = sorted_scores
         print(sorted_scores)
         with open("score.txt", "w") as f:
             for data in sorted_scores:

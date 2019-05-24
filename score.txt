@@ -1,4 +1,7 @@
-a 900
-b 600
-c 300
-d 0
+Dandy 1200
+Adi 300
+Edo 200
+Dinda 200
+Bot 200
+Dodi 100
+Dina 0
