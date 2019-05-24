@@ -126,6 +126,9 @@ def client_thread(conn, addr):
 
 def is_game_over():
     if(game.is_everyone_win()):
+        for player in game.players:
+            if not game.player_decks[player].empty():
+                game.winner.append(player)
         game.update_score()
         game.state = 'finish'
         game.finish = True
@@ -168,9 +171,8 @@ def lie_or_not_phase():
             for card in recently_placed_cards:
                 msg = msg+str(card)+" "
             game.previous_card = None
-            game.player_decks[victim].extend(pile)
             game.is_someone_win(game.turn)
-            print('[THE VICTIM]', victim)
+            game.player_decks[victim].extend(pile)
             game.check_quad_deck()
             if next_turn in game.winner:
                 game.next_turn()

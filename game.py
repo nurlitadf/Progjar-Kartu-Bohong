@@ -36,16 +36,16 @@ class Game:
     def create_decks(self):
         decks = []
         for suit in ['spade', 'heart', 'diamond', 'club']:
-        #for suit in ['spade']:
+            # for suit in ['spade']:
             for name in list(range(2, 11)) + ['J', 'Q', 'K', 'A']:
-            #for name in list(range(2, 6)):
+                # for name in list(range(2, 6)):
                 decks.append([str(name), suit])
         random.shuffle(decks)
 
         player_decks = {}
         for i, player in enumerate(self.players):
             temp_deck = decks[i * 13:(i + 1) * 13]
-            #temp_deck = decks[i * 1:(i + 1) * 1]
+            # temp_deck = decks[i * 4:(i + 1) * 4]
             new_deck = Deck()
             for card in temp_deck:
                 new_deck.add(Card(card[0], card[1]))
@@ -93,9 +93,11 @@ class Game:
             else:
                 scores[player] = score
         sorted_scores = sorted(scores.items(), key=operator.itemgetter(1), reverse=True)
+        print(sorted_scores)
         with open("score.txt", "w") as f:
             for data in sorted_scores:
                 text = "{} {}\n".format(data[0], data[1])
+                print(text)
                 f.write(text)
 
     def is_someone_win(self, player):
@@ -103,12 +105,13 @@ class Game:
             # self.players.remove(player)
             # self.player_decks.pop(player, None)
             self.winner.append(player)
+            self.update_score()
             print(player+" win!!")
         return
 
     def is_everyone_win(self):
         print("hehe")
-        if len(self.winner) == 4:
+        if len(self.winner) == len(self.players) - 1:
             print("yay")
             return True
         return False
