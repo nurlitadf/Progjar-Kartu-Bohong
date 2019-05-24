@@ -194,7 +194,7 @@ console_message = ""
 state_now = ""
 
 while Flag:
-    if GAME_DATA is not None and username in GAME_DATA['winner']:
+    if GAME_DATA is not None and (username in GAME_DATA['winner']):
         screen.blit(background_score, (0, 0))
         render_scoreboard()
 
